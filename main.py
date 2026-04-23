@@ -1,7 +1,7 @@
 import sys
-from PyQt5.QtWidgets import (QApplication, QWidget, QSlider, QCheckBox,
-                             QPushButton, QLineEdit, QVBoxLayout, QHBoxLayout,
-                             QLabel, QTableWidget, QTableWidgetItem, QMessageBox)
+from PyQt5.QtWidgets import (QApplication, QWidget, QSlider, QCheckBox, QPushButton, QLineEdit,
+                             QVBoxLayout, QHBoxLayout, QLabel, QTableWidget, QTableWidgetItem,
+                             QMessageBox)
 from password_generator import generate_password
 from history_manager import add_to_history, load_history
 
@@ -9,10 +9,11 @@ class PasswordGeneratorApp(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
+        self.update_history_table()  # Загрузка истории при запуске
 
     def initUI(self):
         self.setWindowTitle('Генератор случайных паролей')
-        self.setGeometry(300, 300, 400, 300)
+        self.setGeometry(300, 300, 400, 350)
 
         layout = QVBoxLayout()
 
@@ -51,28 +52,3 @@ class PasswordGeneratorApp(QWidget):
         layout.addWidget(self.letters_checkbox)
         layout.addWidget(self.special_checkbox)
         layout.addWidget(self.generate_button)
-        layout.addWidget(self.password_display)
-        layout.addWidget(self.history_table)
-
-        self.setLayout(layout)
-
-    def update_length_label(self):
-        self.length_label.setText(f'Длина: {self.length_slider.value()}')
-
-    def generate_and_show(self):
-        length = self.length_slider.value()
-        use_digits = self.digits_checkbox.isChecked()
-        use_letters = self.letters_checkbox.isChecked()
-        use_special = self.special_checkbox.isChecked()
-
-        try:
-            password = generate_password(length, use_digits, use_letters, use_special)
-            self.password_display.setText(password)
-            add_to_history(password)
-            self.update_history_table()
-            QMessageBox.information(self, 'Готово', 'Пароль сгенерирован и сохранён в историю!')
-        except ValueError as e:
-            QMessageBox.warning(self, 'Ошибка', str(e))
-
-    def update_history_table(self):
- 
