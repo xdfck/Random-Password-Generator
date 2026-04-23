@@ -52,3 +52,39 @@ class PasswordGeneratorApp(QWidget):
         layout.addWidget(self.letters_checkbox)
         layout.addWidget(self.special_checkbox)
         layout.addWidget(self.generate_button)
+        layout.addWidget(self.password_display)
+        layout.addWidget(self.history_table)
+
+        self.setLayout(layout)
+
+    def update_length_label(self):
+        self.length_label.setText(f'Длина: {self.length_slider.value()}')
+
+    def generate_and_show(self):
+        length = self.length_slider.value()
+        use_digits = self.digits_checkbox.isChecked()
+        use_letters = self.letters_checkbox.isChecked()
+        use_special = self.special_checkbox.isChecked()
+
+        try:
+            password = generate_password(length, use_digits, use_letters, use_special)
+            self.password_display.setText(password)
+            add_to_history(password)
+            self.update_history_table()
+            QMessageBox.information(self, 'Готово', 'Пароль сгенерирован и сохранён в историю!')
+        except ValueError as e:
+            QMessageBox.warning(self, 'Ошибка', str(e))
+
+    def update_history_table(self):
+        """Заполняет таблицу истории паролями из файла."""
+        history = load_history()
+        self.history_table.setRowCount(len(history))
+        for i, pwd in enumerate(history):
+            self.history_table.setItem(i, 0, QTableWidgetItem(pwd))
+
+# Точка входа в приложение
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    window = PasswordGeneratorApp()
+    window.show()
+    sys.exit(app.exec_())
